@@ -26,8 +26,8 @@ class Playlist_song(db.Model, SerializerMixin):
     song_id = db.Column(db.Integer, db.ForeignKey('songs.id'))
     playlist_id = db.Column(db.Integer, db.ForeignKey('playlists.id'))
 
-    
-    explicit = db.Column(db.Boolean)
+
+    explicit = db.Column(db.Boolean, nullable=False, default=False)
    
     def __repr__(self):
         return f'<Playlist_song Explicit:{self.explicit}>'
