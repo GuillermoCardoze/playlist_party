@@ -5,6 +5,7 @@
 # Remote library imports
 from flask import request, make_response, abort, jsonify
 from flask_restful import Resource
+from werkzeug.exceptions import NotFound
 
 # Local imports
 from config import app, db, api
@@ -47,6 +48,41 @@ class Songs(Resource):
 api.add_resource(Songs,'/songs')
 
 
+class SongById(Resource):
+    def get(self, id):
+        song_id = Song.query.filter_by(id=id).first()
+        if not song_id:
+            abort(404, "The song was not found.")
+
+        return song_id.to_dict(),200
+    
+    def patch(self, id):
+        song_id = Song.query.filter_by(id=id).first()
+        if not song_id:
+            abort(404, "The song was not found.")
+
+        data = request.get_json()
+        for key in data:
+            setattr(song_id, key, data[key])
+        
+        db.session.add(song_id)
+        db.session.commit()
+
+        return song_id.to_dict(), 202
+    
+    def delete(self, id):
+        song_id = Song.query.filter_by(id=id).first()
+        if not song_id:
+            abort(404, "The song was not found.")
+
+        db.session.add(song_id)
+        db.session.commit()
+
+        return {}, 204
+    
+api.add_resource(SongById, '/songs/<int:id>')
+
+
 class Playlists(Resource):
     def get(self):
         playlist_list = [playlist.to_dict() for playlist in Playlist.query.all()]
@@ -63,7 +99,7 @@ class Playlists(Resource):
             name=request.form['name'],
             description=request.form['description']       #<<---- THIS WAY WORKS FOR FORM DATA
         )
-        
+
         db.session.add(new_playlist)
         db.session.commit()
 
@@ -71,6 +107,45 @@ class Playlists(Resource):
 
 api.add_resource(Playlists,'/playlists')
 
+class PlaylistById(Resource):
+    def get(self, id):
+        playlist_id = Playlist.query.filter_by(id=id).first()
+        if not playlist_id:
+            abort(404, "The playlist was not found.")
+        
+        return playlist_id.to_dict(),200
+    
+    def patch(self, id):
+        playlist_id = Playlist.query.filter_by(id=id).first()
+        if not playlist_id:
+            abort(404, "The playlist was not found.")
+
+        data = request.get_json()
+        for key in data:
+            setattr(playlist_id, key, data[key])
+        
+        db.session.add(playlist_id)
+        db.session.commit()
+
+        return playlist_id.to_dict(), 202
+    
+    def delete(self, id):
+        playlist_id = Playlist.query.filter_by(id=id).first()
+        if not playlist_id:
+            abort(404, "The playlist was not found.")
+
+        db.session.add(playlist_id)
+        db.session.commit()
+
+        return {}, 204
+
+    
+api.add_resource(PlaylistById, '/playlists/<int:id>')
+
+
+# @app.errorhandler(NotFound)
+# def handle_not_found(e):
+#     return make_response("Not Found: The resource was not found.", 404)   <<--- CAN BE USED FOR ALL 404 ERROR MESSAGES
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
