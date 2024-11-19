@@ -16,14 +16,15 @@ if __name__ == '__main__':
     with app.app_context():
         print("Starting seed...")
         
-        # Clear existing data (optional)
-        db.drop_all()  # Uncomment to drop existing tables, use with caution!
-        db.create_all()  # Recreate the tables after dropping
+        db.drop_all()  
+        db.create_all()  
+
+
+        
         
         # Create songs
         songs = []
-        for _ in range(10):  # Generate 10 songs
-            # Generate a random time as a string (e.g., '12:34:56')
+        for _ in range(10):  # 
             duration_str = fake.time()  # Faker generates a string in the format 'HH:MM:SS'
             
             # Convert the string to a datetime.time object
@@ -42,6 +43,11 @@ if __name__ == '__main__':
         db.session.add_all(songs)
         db.session.commit()
 
+
+
+
+
+
         # Create playlists
         playlists = []
         for _ in range(5):  # Generate 5 playlists
@@ -54,6 +60,11 @@ if __name__ == '__main__':
         # Add playlists to session
         db.session.add_all(playlists)
         db.session.commit()
+
+
+
+
+
 
         # Create playlist_songs (many-to-many relationship between Song and Playlist)
         playlist_songs = []

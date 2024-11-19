@@ -27,24 +27,24 @@ class Song(db.Model, SerializerMixin):
             raise ValueError(f"{key.capitalize()} cannot be empty.")
         return value
     
-@validates('duration')
-def validate_duration(self, key, value):
-    if value is None:
-        raise ValueError("Duration cannot be null.")
+    @validates('duration')
+    def validate_duration(self, key, value):
+        if value is None:
+            raise ValueError("Duration cannot be null.")
     
-    # Convert the string into a datetime.time object
-    if isinstance(value, str):  # Check if it's a string
-        value = datetime.strptime(value, '%H:%M:%S').time()
+        # Convert the string into a datetime.time object
+        if isinstance(value, str):  # Check if it's a string
+            value = datetime.strptime(value, '%H:%M:%S').time()
 
-    # Now you can safely check the hour, minute, and second
-    if value.hour < 0 or value.hour > 23:
-        raise ValueError("Hour must be between 0 and 23.")
-    if value.minute < 0 or value.minute > 59:
-        raise ValueError("Minute must be between 0 and 59.")
-    if value.second < 0 or value.second > 59:
-        raise ValueError("Second must be between 0 and 59.")
+        # Now you can safely check the hour, minute, and second
+        if value.hour < 0 or value.hour > 23:
+            raise ValueError("Hour must be between 0 and 23.")
+        if value.minute < 0 or value.minute > 59:
+            raise ValueError("Minute must be between 0 and 59.")
+        if value.second < 0 or value.second > 59:
+            raise ValueError("Second must be between 0 and 59.")
     
-    return value
+        return value
 
         
     @validates('genre')
@@ -56,6 +56,10 @@ def validate_duration(self, key, value):
 
     def __repr__(self):
         return f'<Song Title:{self.title}, Artist:{self.artist}>'
+    
+
+
+
 
 class Playlist_song(db.Model, SerializerMixin):
     __tablename__ = 'playlist_songs'
@@ -86,6 +90,11 @@ class Playlist_song(db.Model, SerializerMixin):
 
     def __repr__(self):
         return f'<Playlist_song SongID:{self.song_id}, PlaylistID:{self.playlist_id}, Explicit:{self.explicit}>'
+    
+
+
+
+    
 
 class Playlist(db.Model, SerializerMixin):
     __tablename__ = 'playlists'
