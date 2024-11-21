@@ -4,14 +4,13 @@ import React, { useState, useEffect } from 'react';
 
 
 function Songs({ songs }) {
-  const [searchQuery, setSearchQuery] = useState(''); // Track search input
+  const [searchSong, setSearchSong] = useState(''); 
 
-  // Filter songs based on search query (search by title and artist)
   const filteredSongs = songs.filter((song) => {
     return (
-      song.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      song.artist.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      song.duration.toLowerCase().includes(searchQuery.toLowerCase())
+      song.title.toLowerCase().includes(searchSong.toLowerCase()) ||
+      song.artist.toLowerCase().includes(searchSong.toLowerCase()) ||
+      song.duration.toLowerCase().includes(searchSong.toLowerCase())
     );
   });
 
@@ -19,13 +18,12 @@ function Songs({ songs }) {
     <div>
       <h2>Song List</h2>
 
-      {/* Search Input */}
       <input
         className='search-song'
         type="text"
         placeholder="Search by song title or artist..."
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)} // Update search query
+        value={searchSong}
+        onChange={(e) => setSearchSong(e.target.value)}
         style={{
           padding: '10px',
           marginBottom: '20px',
@@ -35,14 +33,15 @@ function Songs({ songs }) {
           border: '1px solid #ccc',
         }}
       />
-      <option></option>
+        <button>Explicit Lyrics</button>
+        
 
       
 
       {filteredSongs.length === 0 ? (
-        <p>No songs found</p> // Handle case when no songs match the search
+        <p>No songs found</p> 
       ) : (
-        <ol className="song-list"> {/* Ordered list */}
+        <ol className="song-list"> 
           {filteredSongs.map((song) => (
             <li key={song.id} className="song-item">
               <div className="song-container">
@@ -55,12 +54,17 @@ function Songs({ songs }) {
                 <div className="Duration">
                   <strong>Duration:</strong> {song.duration} mins.
                 </div>
+                <button>Add Song</button>
+                <button>Update Song</button>
+                <button>Delete Song</button>              
                 <br></br>
-              </div>
+                <br></br>
+                </div>
             </li>
           ))}
         </ol>
       )}
+    
     </div>
   );
 }

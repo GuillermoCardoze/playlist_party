@@ -4,9 +4,7 @@ import React, { useState, useEffect } from 'react';
 
 
 function Playlists() {
-
-
-  const [searchQuery, setSearchQuery] = useState(''); // Track search input
+  const [searchQuery, setSearchQuery] = useState(''); 
   const [playlists, setPlaylists] = useState([])
 
   useEffect(()=>{
@@ -15,7 +13,6 @@ function Playlists() {
       .then(res => setPlaylists(res))
   },[])
 
-  // Filter playlists based on search query (search by name and description)
   const filteredPlaylists = playlists.filter((playlist) => {
     return (
       playlist.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -27,13 +24,13 @@ function Playlists() {
     <div>
       <h2>Playlist List</h2>
 
-      {/* Search Input */}
+      
       <input
         className='search-playlist'
         type="text"
         placeholder="Search by playlist name or description..."
         value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)} // Update search query
+        onChange={(e) => setSearchQuery(e.target.value)} 
         style={{
           padding: '10px',
           marginBottom: '20px',
@@ -43,14 +40,14 @@ function Playlists() {
           border: '1px solid #ccc',
         }}
       />
-      <option></option>
+      <button>Explicit Lyrics</button>
 
       
 
       {filteredPlaylists.length === 0 ? (
-        <p>No playlists found</p> // Handle case when no playlists match the search
+        <p>No playlists found</p> 
       ) : (
-        <ol className="playlist-list"> {/* Ordered list */}
+        <ol className="playlist-list"> 
           {filteredPlaylists.map((playlist) => (
             <li key={playlist.id} className="playlist-item">
               <div className="playlist-container">
@@ -60,7 +57,12 @@ function Playlists() {
                 <div className="Description">
                   <strong>Description:</strong> {playlist.description}
                 </div>
+                <button>Add playlist</button>
+                <button>Update playlist</button>
+                <button>Delete playlist</button>
                 <br></br>
+                <br></br>
+
               </div>
             </li>
           ))}

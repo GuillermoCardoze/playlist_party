@@ -13,6 +13,7 @@ if __name__ == '__main__':
 
         db.drop_all()  
         db.create_all()  
+        
 
         songs_data = [
             {"title": "Shape of You", "artist": "Ed Sheeran", "genre": "Pop", "duration": "04:30:00"},
