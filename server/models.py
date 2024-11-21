@@ -16,7 +16,6 @@ class Song(db.Model, SerializerMixin):
     genre = db.Column(db.String)
     duration = db.Column(db.Time)
 
-    # Direct access to Playlist_song association
     playlist_songs = db.relationship('Playlist_song', back_populates='song', cascade='all, delete-orphan')
 
     serialize_rules = ('-playlist_songs',)
@@ -32,11 +31,9 @@ class Song(db.Model, SerializerMixin):
         if value is None:
             raise ValueError("Duration cannot be null.")
     
-        # Convert the string into a datetime.time object
-        if isinstance(value, str):  # Check if it's a string
+        if isinstance(value, str):  
             value = datetime.strptime(value, '%H:%M:%S').time()
 
-        # Now you can safely check the hour, minute, and second
         if value.hour < 0 or value.hour > 23:
             raise ValueError("Hour must be between 0 and 23.")
         if value.minute < 0 or value.minute > 59:
@@ -69,7 +66,6 @@ class Playlist_song(db.Model, SerializerMixin):
     playlist_id = db.Column(db.Integer, db.ForeignKey('playlists.id'), nullable=False)
     explicit = db.Column(db.Boolean, default=False)
 
-    # Relationships to Song and Playlist
     song = db.relationship('Song', back_populates='playlist_songs')
     playlist = db.relationship('Playlist', back_populates='playlist_songs')
 
@@ -103,7 +99,6 @@ class Playlist(db.Model, SerializerMixin):
     name = db.Column(db.String, nullable=False)
     description = db.Column(db.String)
 
-    # Direct access to Playlist_song association
     playlist_songs = db.relationship('Playlist_song', back_populates='playlist', cascade='all, delete-orphan')
 
     serialize_rules = ('-playlist_songs',)

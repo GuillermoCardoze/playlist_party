@@ -1,46 +1,43 @@
 #!/usr/bin/env python3
-
-# Standard library imports
-from random import randint, choice as rc
-import random
-
-# Remote library imports
-from faker import Faker
 from datetime import datetime
+# Standard library imports
+import random
 
 # Local imports
 from app import app
 from models import db, Song, Playlist, Playlist_song  
 
 if __name__ == '__main__':
-    fake = Faker()
     with app.app_context():
         print("Starting seed...")
-        
+
         db.drop_all()  
         db.create_all()  
 
+        songs_data = [
+            {"title": "Shape of You", "artist": "Ed Sheeran", "genre": "Pop", "duration": "04:30:00"},
+            {"title": "Bohemian Rhapsody", "artist": "Queen", "genre": "Rock", "duration": "06:00:00"},
+            {"title": "Blinding Lights", "artist": "The Weeknd", "genre": "Pop", "duration": "04:30:00"},
+            {"title": "Smells Like Teen Spirit", "artist": "Nirvana", "genre": "Rock", "duration": "05:10:00"},
+            {"title": "Imagine", "artist": "John Lennon", "genre": "Rock", "duration": "03:15:00"},
+            {"title": "Billie Jean", "artist": "Michael Jackson", "genre": "Pop", "duration": "04:30:00"},
+            {"title": "Like a Rolling Stone", "artist": "Bob Dylan", "genre": "Rock", "duration": "06:00:00"},
+            {"title": "Stayin' Alive", "artist": "Bee Gees", "genre": "Pop", "duration": "04:30:00"},
+            {"title": "What's Going On", "artist": "Marvin Gaye", "genre": "Pop", "duration": "04:00:00"},
+            {"title": "Rolling in the Deep", "artist": "Adele", "genre": "Pop", "duration": "05:00:00"},
+        ]
 
-
-        
-        # Create songs
         songs = []
-        for _ in range(10):  # 
-            duration_str = fake.time()  # Faker generates a string in the format 'HH:MM:SS'
-            
-            # Convert the string to a datetime.time object
-            duration = datetime.strptime(duration_str, "%H:%M:%S").time()
-            
-            # Create a new Song instance with valid data
+        for song_data in songs_data:
+            duration = datetime.strptime(song_data["duration"], "%H:%M:%S").time()  
             song = Song(
-                title=fake.sentence(),  # Random song title
-                artist=fake.name(),     # Random artist name
-                genre=rc(['Rock', 'Pop', 'Jazz', 'Hip Hop', 'Classical', 'Country', 'Electronic']),  # Random genre
-                duration=duration  # Random duration converted to time object
+                title=song_data["title"],
+                artist=song_data["artist"],
+                genre=song_data["genre"],
+                duration=duration
             )
-            songs.append(song)  # Append the song to the list
+            songs.append(song)
 
-        # Add songs to session
         db.session.add_all(songs)
         db.session.commit()
 
@@ -48,19 +45,6 @@ if __name__ == '__main__':
 
 
 
-
-        # # Create playlists
-        # playlists = []
-        # for _ in range(5):  # Generate 5 playlists
-        #     playlist = Playlist(
-        #         name=fake.catch_phrase(),  # Random playlist name
-        #         description=fake.text(max_nb_chars=200),  # Random playlist description
-        #     )
-        #     playlists.append(playlist)
-
-        # # Add playlists to session
-        # db.session.add_all(playlists)
-        # db.session.commit()
         playlist_data = [
             ("Chill Vibes", "A mix of relaxing and mellow tracks perfect for unwinding."),
             ("Workout Hits", "High-energy music to power you through your workout session."),
@@ -69,38 +53,30 @@ if __name__ == '__main__':
             ("Indie Favorites", "Indie tracks that you won't hear on the radio, but should.")
         ]
 
-        # Create playlists
         playlists = []
-        for name, description in playlist_data:  # Directly use the predefined name-description pairs
+        for name, description in playlist_data:
             playlist = Playlist(
                 name=name,
                 description=description,
             )
             playlists.append(playlist)
 
-        # Add playlists to session
         db.session.add_all(playlists)
         db.session.commit()
 
 
 
-
-
-        # Create playlist_songs (many-to-many relationship between Song and Playlist)
         playlist_songs = []
         for playlist in playlists:
             for song in songs:
                 playlist_song = Playlist_song(
                     song_id=song.id,
                     playlist_id=playlist.id,
-                    explicit=rc([True, False])  # Random explicit flag (True/False)
+                    explicit=random.choice([True, False])
                 )
                 playlist_songs.append(playlist_song)
 
-        # Add playlist_song records to session
         db.session.add_all(playlist_songs)
-
-        # Commit playlist_songs to the database
         db.session.commit()
 
         print("Seeding completed.")
