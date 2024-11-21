@@ -2,6 +2,7 @@
 
 # Standard library imports
 from random import randint, choice as rc
+import random
 
 # Remote library imports
 from faker import Faker
@@ -20,7 +21,7 @@ if __name__ == '__main__':
         db.create_all()  
 
 
-        
+
         
         # Create songs
         songs = []
@@ -48,19 +49,38 @@ if __name__ == '__main__':
 
 
 
+        # # Create playlists
+        # playlists = []
+        # for _ in range(5):  # Generate 5 playlists
+        #     playlist = Playlist(
+        #         name=fake.catch_phrase(),  # Random playlist name
+        #         description=fake.text(max_nb_chars=200),  # Random playlist description
+        #     )
+        #     playlists.append(playlist)
+
+        # # Add playlists to session
+        # db.session.add_all(playlists)
+        # db.session.commit()
+        playlist_data = [
+            ("Chill Vibes", "A mix of relaxing and mellow tracks perfect for unwinding."),
+            ("Workout Hits", "High-energy music to power you through your workout session."),
+            ("Summer Beats", "Upbeat tracks to get you in the summer mood."),
+            ("Rock Classics", "Timeless rock anthems that everyone loves."),
+            ("Indie Favorites", "Indie tracks that you won't hear on the radio, but should.")
+        ]
+
         # Create playlists
         playlists = []
-        for _ in range(5):  # Generate 5 playlists
+        for name, description in playlist_data:  # Directly use the predefined name-description pairs
             playlist = Playlist(
-                name=fake.catch_phrase(),  # Random playlist name
-                description=fake.text(max_nb_chars=200),  # Random playlist description
+                name=name,
+                description=description,
             )
             playlists.append(playlist)
 
         # Add playlists to session
         db.session.add_all(playlists)
         db.session.commit()
-
 
 
 

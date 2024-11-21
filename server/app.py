@@ -26,19 +26,19 @@ class Songs(Resource):
         return song_list, 200
     
     def post(self):
-        # request_json = request.get_json()
-        # new_song = Song(
-        #     title=request_json['title'],
-        #     artist=request_json['artist'],        #<<--- THIS WAY WORKS FOR JSON DATA
-        #     genre=request_json['genre'],
-        #     duration=request_json['duration']
-        # )
+        request_json = request.get_json()
         new_song = Song(
-            title=request.form['title'],
-            artist=request.form['artist'],
-            genre=request.form['genre'],                #<<--- THIS WAY WORKS FOR FORM DATA
-            duration=request.form['duration']
+            title=request_json['title'],
+            artist=request_json['artist'],        #<<--- THIS WAY WORKS FOR JSON DATA
+            genre=request_json['genre'],
+            duration=request_json['duration']
         )
+        # new_song = Song(
+        #     title=request.form['title'],
+        #     artist=request.form['artist'],
+        #     genre=request.form['genre'],                #<<--- THIS WAY WORKS FOR FORM DATA
+        #     duration=request.form['duration']
+        # )
 
         db.session.add(new_song)
         db.session.commit()
@@ -89,16 +89,16 @@ class Playlists(Resource):
         return playlist_list, 200
     
     def post(self):
-        # request_json = request.get_json()
-        # new_playlist = Playlist(
-        #     name=request_json['name'],
-        #     description=request_json['description']        #<<--- THIS WAY WORKS FOR JSON DATA
-        # )
-
+        request_json = request.get_json()
         new_playlist = Playlist(
-            name=request.form['name'],
-            description=request.form['description']       #<<---- THIS WAY WORKS FOR FORM DATA
+            name=request_json['name'],
+            description=request_json['description']        #<<--- THIS WAY WORKS FOR JSON DATA
         )
+
+        # new_playlist = Playlist(
+        #     name=request.form['name'],
+        #     description=request.form['description']       #<<---- THIS WAY WORKS FOR FORM DATA
+        # )
 
         db.session.add(new_playlist)
         db.session.commit()
@@ -142,6 +142,8 @@ class PlaylistById(Resource):
     
 api.add_resource(PlaylistById, '/playlists/<int:id>')
 
+
+        
 
 # @app.errorhandler(NotFound)
 # def handle_not_found(e):

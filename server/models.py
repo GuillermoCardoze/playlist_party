@@ -81,11 +81,11 @@ class Playlist_song(db.Model, SerializerMixin):
             raise ValueError("Explicit must be a boolean value.")
         return value
 
-    @validates('song_id', 'playlist_id')
-    def validate_foreign_keys(self, key, value):
-        if not value:
-            raise ValueError(f"{key} is required.")
-        return value
+    # @validates('song_id', 'playlist_id')
+    # def validate_foreign_keys(self, key, value):
+    #     if not value:
+    #         raise ValueError(f"{key} is required.")
+    #     return value
 
 
     def __repr__(self):
@@ -94,7 +94,7 @@ class Playlist_song(db.Model, SerializerMixin):
 
 
 
-    
+
 
 class Playlist(db.Model, SerializerMixin):
     __tablename__ = 'playlists'
