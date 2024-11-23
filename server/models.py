@@ -1,11 +1,8 @@
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.associationproxy import association_proxy
-
 from config import db
 from sqlalchemy.orm import validates
-from datetime import datetime
-
-
+from datetime import time
 
 class Song(db.Model, SerializerMixin):
     __tablename__ = 'songs'
@@ -14,36 +11,37 @@ class Song(db.Model, SerializerMixin):
     title = db.Column(db.String, nullable=False)
     artist = db.Column(db.String, nullable=False)
     genre = db.Column(db.String)
-    duration = db.Column(db.Time)
+    duration = db.Column(db.Time)  # Stores time in minutes and seconds
 
     playlist_songs = db.relationship('Playlist_song', back_populates='song', cascade='all, delete-orphan')
 
     serialize_rules = ('-playlist_songs',)
 
-    @validates('title','artist')
+    @validates('title', 'artist')
     def validate_not_empty(self, key, value):
         if not value or value.strip() == "":
             raise ValueError(f"{key.capitalize()} cannot be empty.")
-        return value
+        return value.strip()
     
     @validates('duration')
     def validate_duration(self, key, value):
         if value is None:
             raise ValueError("Duration cannot be null.")
-    
-        if isinstance(value, str):  
-            value = datetime.strptime(value, '%H:%M:%S').time()
 
-        if value.hour < 0 or value.hour > 23:
-            raise ValueError("Hour must be between 0 and 23.")
+        if isinstance(value, str):  
+            try:
+                minutes, seconds = map(int, value.split(":"))
+                value = time(minute=minutes, second=seconds)
+            except ValueError:
+                raise ValueError("Duration must be in the format MM:SS.")
+
         if value.minute < 0 or value.minute > 59:
-            raise ValueError("Minute must be between 0 and 59.")
+            raise ValueError("Minutes must be between 0 and 59.")
         if value.second < 0 or value.second > 59:
-            raise ValueError("Second must be between 0 and 59.")
-    
+            raise ValueError("Seconds must be between 0 and 59.")
+        
         return value
 
-        
     @validates('genre')
     def validate_genre(self, key, value):
         allowed_genres = ['Rock', 'Pop', 'Jazz', 'Hip Hop', 'Classical', 'Country', 'Electronic']
@@ -53,7 +51,6 @@ class Song(db.Model, SerializerMixin):
 
     def __repr__(self):
         return f'<Song Title:{self.title}, Artist:{self.artist}>'
-    
 
 
 

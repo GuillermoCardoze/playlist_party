@@ -40,7 +40,24 @@ function Playlists() {
           border: '1px solid #ccc',
         }}
       />
-      <button>Explicit Lyrics</button>
+      <br></br>
+      <button style={{
+          padding: '10px',
+          marginBottom: '20px',
+          width: '20%',
+          maxWidth: '400px',
+          borderRadius: '5px',
+          border: '1px solid #ccc',
+        }}>Add Playlist</button>
+
+      <button style={{
+          padding: '10px',
+          marginBottom: '20px',
+          width: '20%',
+          maxWidth: '400px',
+          borderRadius: '5px',
+          border: '1px solid #ccc',
+        }}>Explicit Lyrics</button>
 
       
 
@@ -57,7 +74,6 @@ function Playlists() {
                 <div className="Description">
                   <strong>Description:</strong> {playlist.description}
                 </div>
-                <button>Add playlist</button>
                 <button>Update playlist</button>
                 <button>Delete playlist</button>
                 <br></br>

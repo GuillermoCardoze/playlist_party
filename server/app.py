@@ -75,7 +75,7 @@ class SongById(Resource):
         if not song_id:
             abort(404, "The song was not found.")
 
-        db.session.add(song_id)
+        db.session.delete(song_id)
         db.session.commit()
 
         return {}, 204
