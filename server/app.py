@@ -134,10 +134,21 @@ class PlaylistById(Resource):
         if not playlist_id:
             abort(404, "The playlist was not found.")
 
-        db.session.add(playlist_id)
+        db.session.delete(playlist_id)
         db.session.commit()
 
         return {}, 204
+
+## DELETE WITH .GET() OPTION
+    # def delete(self, id):
+    #     playlist = Playlist.query.get(id)
+    #     if not playlist:
+    #         abort(404, description="The playlist was not found.")
+
+    #     db.session.delete(playlist)
+    #     db.session.commit()
+
+    #     return {}, 204
 
     
 api.add_resource(PlaylistById, '/playlists/<int:id>')

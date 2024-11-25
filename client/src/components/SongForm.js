@@ -76,6 +76,14 @@ function SongForm() {
               value={values.title}
               onChange={handleChange}
               onBlur={handleBlur}
+              style={{
+                padding: '10px',
+                marginBottom: '20px',
+                width: '100%',
+                maxWidth: '400px',
+                borderRadius: '5px',
+                border: '1px solid #ccc',
+              }}
             />
             <ErrorMessage name="title" component="div" style={{ color: "red" }} />
           </div>
@@ -91,6 +99,14 @@ function SongForm() {
               value={values.artist}
               onChange={handleChange}
               onBlur={handleBlur}
+              style={{
+                padding: '10px',
+                marginBottom: '20px',
+                width: '100%',
+                maxWidth: '400px',
+                borderRadius: '5px',
+                border: '1px solid #ccc',
+              }}
             />
             <ErrorMessage name="artist" component="div" style={{ color: "red" }} />
           </div>
@@ -106,6 +122,14 @@ function SongForm() {
               value={values.genre}
               onChange={handleChange}
               onBlur={handleBlur}
+              style={{
+                padding: '10px',
+                marginBottom: '20px',
+                width: '100%',
+                maxWidth: '400px',
+                borderRadius: '5px',
+                border: '1px solid #ccc',
+              }}
             />
             <ErrorMessage name="genre" component="div" style={{ color: "red" }} />
           </div>
@@ -121,12 +145,33 @@ function SongForm() {
               value={values.duration}
               onChange={handleChange}
               onBlur={handleBlur}
+              style={{
+                padding: '10px',
+                marginBottom: '20px',
+                width: '100%',
+                maxWidth: '400px',
+                borderRadius: '5px',
+                border: '1px solid #ccc',
+              }}
             />
             <ErrorMessage name="duration" component="div" style={{ color: "red" }} />
           </div>
 
           {/* Submit Button */}
-          <button type="submit">{songData.id ? "Update Song" : "Add Song"}</button>
+          <button type="submit"
+          style={{
+            padding: '10px',
+            marginBottom: '10px',
+            width: '100%',
+            maxWidth: '200px',
+            borderRadius: '5px',
+            border: '1px solid #ccc',
+            backgroundColor: '#4CAF50',
+            color: 'white',
+            cursor: 'pointer',
+          }}>{songData.id ? "Update Song" : "Add Song"}
+            
+          </button>
         </form>
       )}
     </Formik>

@@ -82,13 +82,16 @@ function Songs() {
       <button
         onClick={handleGoToForm}
         style={{
-          padding: "10px",
-          marginBottom: "20px",
-          width: "20%",
-          maxWidth: "400px",
-          borderRadius: "5px",
-          border: "1px solid #ccc",
-        }}
+            padding: '10px',
+            marginBottom: '10px',
+            width: '100%',
+            maxWidth: '200px',
+            borderRadius: '5px',
+            border: '1px solid #ccc',
+            backgroundColor: '#4CAF50',
+            color: 'white',
+            cursor: 'pointer',
+          }}
       >
         Add Song
       </button>
@@ -106,11 +109,32 @@ function Songs() {
                 <div className="Artist">
                   <strong>Artist:</strong> {song.artist}
                 </div>
+                <div className="Genre">
+                  <strong>Genre:</strong> {song.genre}
+                </div>
                 <div className="Duration">
                   <strong>Duration:</strong> {song.duration} mins.
                 </div>
-                <button onClick={() => handleUpdateSong(song)}>Update Song</button>
-                <button onClick={() => handleDelete(song.id)}>Delete Song</button>
+                <button onClick={() => handleUpdateSong(song)}
+                    style={{
+                        padding: '5px 10px',
+                        margin: '5px',
+                        borderRadius: '5px',
+                        border: '1px solid #ccc',
+                        backgroundColor: '#2196F3',
+                        color: 'white',
+                        cursor: 'pointer',
+                      }}>Update Song</button>
+                <button onClick={() => handleDelete(song.id)}
+                    style={{
+                        padding: '5px 10px',
+                        margin: '5px',
+                        borderRadius: '5px',
+                        border: '1px solid #ccc',
+                        backgroundColor: '#f44336',
+                        color: 'white',
+                        cursor: 'pointer',
+                      }}>Delete Song</button>
                 <br />
                 <br />
               </div>
