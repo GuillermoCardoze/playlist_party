@@ -6,6 +6,7 @@ function Playlists() {
   const [playlists, setPlaylists] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [editingPlaylist, setEditingPlaylist] = useState(null);
+  
 
   // Fetch playlists from the backend on mount
   useEffect(() => {
