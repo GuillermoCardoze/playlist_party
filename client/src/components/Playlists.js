@@ -8,7 +8,6 @@ function Playlists() {
   const [editingPlaylist, setEditingPlaylist] = useState(null);
   
 
-  // Fetch playlists from the backend on mount
   useEffect(() => {
     fetch('/playlists')
       .then((res) => res.json())

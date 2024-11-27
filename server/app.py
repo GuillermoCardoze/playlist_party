@@ -397,40 +397,59 @@ class Party(Resource):
 
 api.add_resource(Party, '/party')
 
-
 class PartyById(Resource):
     def get(self, id):
+        # Retrieve a party (Playlist_song) by its ID
         party = Playlist_song.query.filter_by(id=id).first()
+        
         if not party:
+            # If party is not found, return a 404 error
             abort(404, "The party was not found.")
         
-        return party.to_dict(),200
+        # Return the party data in dictionary form
+        return party.to_dict(), 200
     
     def patch(self, id):
+        # Find the party entry by ID
         party = Playlist_song.query.filter_by(id=id).first()
+        
         if not party:
+            # If party is not found, return a 404 error
             abort(404, "The party was not found.")
-
+        
+        # Get the data from the request body
         data = request.get_json()
+        
+        # Update the fields of the party object with the new data
         for key in data:
             setattr(party, key, data[key])
         
+        # Commit the changes to the database
         db.session.add(party)
         db.session.commit()
 
+        # Return the updated party data in dictionary form
         return party.to_dict(), 202
     
     def delete(self, id):
+        # Find the party entry by ID
         party = Playlist_song.query.filter_by(id=id).first()
+        
         if not party:
+            # If party is not found, return a 404 error
             abort(404, "The party was not found.")
-
+        
+        # Delete the party from the database
         db.session.delete(party)
         db.session.commit()
 
+        # Return an empty response with a 204 status code
         return {}, 204
 
+
+# Add PartyById resource to the API
 api.add_resource(PartyById, '/party/<int:id>')
+
 
 
 if __name__ == '__main__':
