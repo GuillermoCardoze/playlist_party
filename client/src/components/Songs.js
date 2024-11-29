@@ -275,8 +275,10 @@
 import React from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { Link } from 'react-router-dom';
 
-function Songs({ songs, setSongs }) {
+function Songs({ songs, playlists, setSongs, deleteSong }) {
+  // Formik for the "Add Song" form
   const formik = useFormik({
     initialValues: {
       title: '',
@@ -292,37 +294,50 @@ function Songs({ songs, setSongs }) {
         .matches(/^\d{1,2}:\d{2}$/, 'Duration must be in MM:SS format')
         .required('Duration is required'),
     }),
-    onSubmit: async (values, { resetForm }) => {
-      try {
-        // Convert duration to minutes and seconds
-        const [minutes, seconds] = values.duration.split(':').map(Number);
-        const formattedDuration = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    onSubmit: (values) => {
+      const [minutes, seconds] = values.duration.split(':').map(Number);
+      const formattedDuration = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 
-        // Submit new song to the API
-        const response = await fetch('/songs', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            ...values,
-            duration: formattedDuration,  // Send formatted duration
-          }),
-        });
-
-        if (response.ok) {
-          const newSong = await response.json();
+      // POST request to add a new song
+      fetch('/songs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...values,
+          duration: formattedDuration,  // Ensure duration is in MM:SS format
+        }),
+      })
+        .then((response) => response.json())
+        .then((newSong) => {
           setSongs((prevSongs) => [...prevSongs, newSong]);
-          resetForm();  // Clear the form fields
-        } else {
-          console.error('Failed to add song');
-        }
-      } catch (error) {
-        console.error('Error adding song:', error);
-      }
+          formik.resetForm();  // Reset the form fields
+        })
+        .catch((error) => {
+          console.error('Error adding song:', error);
+        });
     },
   });
 
+  // const deleteSong = (songId) => {
+  //   fetch(`/songs/${songId}`, {
+  //     method: 'DELETE',
+  //   })
+  //     .then((response) => {
+  //       if (response.ok) {
+  //         // Remove the song from the list after successful deletion
+  //         setSongs(songs.filter((song) => song.id !== songId));
+  //       } else {
+  //         console.error('Error deleting song');
+  //       }
+  //     })
+  //     .catch((error) => console.error('Error deleting song:', error));
+  // };
+
+  
+
   return (
     <div>
+      <h2>Song List</h2>
       <form onSubmit={formik.handleSubmit}>
         <div>
           <input
@@ -333,9 +348,7 @@ function Songs({ songs, setSongs }) {
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
           />
-          {formik.touched.title && formik.errors.title ? (
-            <div className="error">{formik.errors.title}</div>
-          ) : null}
+          {formik.touched.title && formik.errors.title && <div>{formik.errors.title}</div>}
         </div>
         <div>
           <input
@@ -346,9 +359,7 @@ function Songs({ songs, setSongs }) {
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
           />
-          {formik.touched.artist && formik.errors.artist ? (
-            <div className="error">{formik.errors.artist}</div>
-          ) : null}
+          {formik.touched.artist && formik.errors.artist && <div>{formik.errors.artist}</div>}
         </div>
         <div>
           <input
@@ -359,9 +370,7 @@ function Songs({ songs, setSongs }) {
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
           />
-          {formik.touched.genre && formik.errors.genre ? (
-            <div className="error">{formik.errors.genre}</div>
-          ) : null}
+          {formik.touched.genre && formik.errors.genre && <div>{formik.errors.genre}</div>}
         </div>
         <div>
           <input
@@ -372,26 +381,32 @@ function Songs({ songs, setSongs }) {
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
           />
-          {formik.touched.duration && formik.errors.duration ? (
-            <div className="error">{formik.errors.duration}</div>
-          ) : null}
+          {formik.touched.duration && formik.errors.duration && <div>{formik.errors.duration}</div>}
         </div>
         <button type="submit">Add Song</button>
       </form>
-      <ul className="cards">
+
+      <ol className="cards">
         {songs.map((song) => (
           <div className="card" key={song.id}>
-            <strong>Title:</strong> {song.title}
-            <br />
-            <strong>Artist:</strong> {song.artist}
-            <br />
-            <strong>Genre:</strong> {song.genre}
-            <br />
-            <strong>Duration:</strong> {song.duration}
-            <br />
+            <li>
+              <strong>Title:</strong> {song.title}
+              <br />
+              <strong>Artist:</strong> {song.artist}
+              <br />
+              <strong>Genre:</strong> {song.genre}
+              <br />
+              <strong>Duration:</strong> {song.duration}
+              <br />
+              <Link to={`/edit-song/${song.id}`}>
+                <button>Edit</button>
+              </Link>
+              {/* Delete button */}
+              <button onClick={() => deleteSong(song.id)}>Delete</button>
+            </li>
           </div>
         ))}
-      </ul>
+      </ol>
     </div>
   );
 }

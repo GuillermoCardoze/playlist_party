@@ -6,9 +6,10 @@ function Navbar() {
     return (
         <nav>
             <ul>
-                <ul><Link to="/">Home</Link></ul>
-                <ul><Link to="/songs">Songs</Link></ul>
-                <ul><Link to="/playlists">Playlists</Link></ul>
+                <li><Link to="/">Home</Link></li>
+                <li><Link to="/songs">Songs</Link></li>
+                <li><Link to="/playlists">Playlists</Link></li>
+                <li><Link to="/edit-song/new">New Song Form</Link></li>  {/* Adjusted for the edit route */}
             </ul>
         </nav>
     );

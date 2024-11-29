@@ -1,58 +1,10 @@
-// import React, { useState, useEffect } from "react";
-// import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-// import Navbar from "./NavBar";
-// import Playlists from "./Playlists";
-// import Songs from "./Songs";
-// import Home from "./Home";
-
-
-
-
-
-
-
-// function App() {
-//    const [songs, setSongs] = useState([])
-
-//    useEffect(()=>{
-//        fetch('/songs')
-//        .then(res => res.json())
-//        .then(res => setSongs(res))
-//    },[])
-
-
-
-
-
-//   return (
-//     <Router>
-//       <div className="App">
-//         <Navbar />
-//         <Routes>
-//           <Route path="/" element={<Home />} />
-//           <Route path="songs" element={<Songs songs={songs} setSongs={setSongs}/>} />
-//           <Route path="playlists" element={<Playlists />} />
-
-//         </Routes>
-//       </div>
-//     </Router>
-//   );
-// }
-
-// export default App;
-
-
-///////////////////////////////////////////////////////
-///////////////////////////////////////////////////////
-///////////////////////////////////////////////////////
-///////////////////////////////////////////////////////
-///////////////////////////////////////////////////////
-
-
-
-
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import NavBar from './NavBar';
 import Songs from './Songs';
+import SongForm from './SongForm';
+import Home from './Home';
+import Playlists from './Playlists';
 
 function App() {
   const [songs, setSongs] = useState([]);
@@ -81,13 +33,47 @@ function App() {
       .catch((err) => console.error('Error fetching data:', err));
   }, []);
 
+  // Delete function lifted to App
+  const deleteSong = (songId) => {
+    fetch(`/songs/${songId}`, {
+      method: 'DELETE',
+    })
+      .then((response) => {
+        if (response.ok) {
+          setSongs((prevSongs) => prevSongs.filter((song) => song.id !== songId));
+        } else {
+          console.error('Error deleting song');
+        }
+      })
+      .catch((error) => console.error('Error deleting song:', error));
+  };
+
   return (
-    <div>
-      <h1>Music App</h1>
-      <Songs songs={songs} playlists={playlists} setSongs={setSongs} />
-    </div>
+    <Router>
+      <div>
+        <NavBar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route
+            path="songs"
+            element={<Songs songs={songs} playlists={playlists} setSongs={setSongs} deleteSong={deleteSong} />}
+          />
+          <Route
+            path="playlists"
+            element={<Playlists songs={songs} playlists={playlists} setSongs={setSongs} />}
+          />
+          <Route
+            path="edit-song/:id"
+            element={<SongForm songs={songs} playlists={playlists} setSongs={setSongs} deleteSong={deleteSong} />}
+          />
+          {/* <Route
+            path="edit-song/new"
+            element={<SongForm songs={songs} playlists={playlists} setSongs={setSongs} deleteSong={deleteSong} />}
+          /> */}
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
 export default App;
-
