@@ -60,7 +60,7 @@ function App() {
           />
           <Route
             path="playlists"
-            element={<Playlists songs={songs} playlists={playlists} setSongs={setSongs} />}
+            element={<Playlists songs={songs} playlists={playlists} setPlaylists={setPlaylists} setSongs={setSongs} />}
           />
           <Route
             path="edit-song/:id"
