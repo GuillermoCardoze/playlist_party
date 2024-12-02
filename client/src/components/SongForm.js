@@ -3,12 +3,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
-function SongForm({ songs, playlists, setSongs, deleteSong, setPartyData, setPlaylists }) {
+function SongForm({ songs, playlists, setSongs, deleteSong, setPartyData, setPlaylists, partyData }) {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // Find the song if not adding a new one (id !== 'new')
+  // Find the song and associated partyData if not adding a new one (id !== 'new')
   const song = id !== 'new' ? songs.find((s) => s.id === parseInt(id)) : null;
+  const partyInfo = song ? partyData.find((p) => p.song_id === song.id) : null; // Find the associated partyData
 
   // Redirect if trying to edit a song that doesn't exist
   useEffect(() => {
@@ -23,8 +24,8 @@ function SongForm({ songs, playlists, setSongs, deleteSong, setPartyData, setPla
       artist: song?.artist || '',
       genre: song?.genre || '',
       duration: song?.duration || '',
-      explicit: song?.explicit || false,
-      playlist_id: song?.playlist_id || '', // If editing, use the existing playlist_id
+      explicit: partyInfo?.explicit || false, // Explicit info from partyData
+      playlist_id: partyInfo?.playlist_id || '', // Playlist ID from partyData
     },
     validationSchema: Yup.object({
       title: Yup.string().required('Title is required'),
@@ -51,7 +52,6 @@ function SongForm({ songs, playlists, setSongs, deleteSong, setPartyData, setPla
           .then((response) => response.json())
           .then((newSong) => {
             setSongs((prevSongs) => [...prevSongs, newSong]);
-            
   
             // Now post to /party with the new song_id
             fetch('/party', {
@@ -94,7 +94,7 @@ function SongForm({ songs, playlists, setSongs, deleteSong, setPartyData, setPla
             );
   
             // Post to /party with the updated song_id
-            fetch(`/party/${song.id}`, {  // Use song.id to update the playlist entry
+            fetch(`/party/${partyInfo.id}`, {  // Use partyInfo.id to update the playlist entry
               method: 'PATCH',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -122,7 +122,6 @@ function SongForm({ songs, playlists, setSongs, deleteSong, setPartyData, setPla
       }
     },
   });
-  
 
   // If there's no song and we're not adding a new one, don't render the form
   if (!song && id !== 'new') return null;

@@ -83,6 +83,7 @@ function App() {
               setSongs={setSongs}
               deleteSong={deleteSong}
               setPartyData={setPartyData}
+              partyData={partyData}
             />}
           />
         </Routes>
