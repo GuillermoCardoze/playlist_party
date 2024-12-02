@@ -3,27 +3,28 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
-function SongForm({ songs, playlists, setSongs, deleteSong }) {
+function SongForm({ songs, playlists, setSongs, deleteSong, setPartyData, setPlaylists }) {
   const { id } = useParams();
   const navigate = useNavigate();
-  
+
   // Find the song if not adding a new one (id !== 'new')
   const song = id !== 'new' ? songs.find((s) => s.id === parseInt(id)) : null;
 
   // Redirect if trying to edit a song that doesn't exist
   useEffect(() => {
     if (id !== 'new' && !song) {
-      navigate('/songs'); // If no song is found, redirect to the songs list
+      navigate('/songs');
     }
   }, [song, id, navigate]);
 
-  // Formik setup for form handling
   const formik = useFormik({
     initialValues: {
       title: song?.title || '',
       artist: song?.artist || '',
       genre: song?.genre || '',
-      duration: song?.duration || '',  // Duration in MM:SS format
+      duration: song?.duration || '',
+      explicit: song?.explicit || false,
+      playlist_id: song?.playlist_id || '', // If editing, use the existing playlist_id
     },
     validationSchema: Yup.object({
       title: Yup.string().required('Title is required'),
@@ -36,7 +37,7 @@ function SongForm({ songs, playlists, setSongs, deleteSong }) {
     onSubmit: (values) => {
       const [minutes, seconds] = values.duration.split(':').map(Number);
       const formattedDuration = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-
+  
       if (id === 'new') {
         // Create new song
         fetch('/songs', {
@@ -44,32 +45,76 @@ function SongForm({ songs, playlists, setSongs, deleteSong }) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             ...values,
-            duration: formattedDuration,  // Ensure duration is in MM:SS format
+            duration: formattedDuration,
           }),
         })
           .then((response) => response.json())
           .then((newSong) => {
             setSongs((prevSongs) => [...prevSongs, newSong]);
-            navigate('/songs');  // Navigate back to the songs list
+            
+  
+            // Now post to /party with the new song_id
+            fetch('/party', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                explicit: values.explicit,
+                song_id: newSong.id,  // Use the new song_id
+                playlist_id: values.playlist_id,  // Assuming playlist_id is provided
+              }),
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                console.log('Playlist song created:', data);
+                // Store the response in setParty
+                setPartyData((prevPartyData) => [...prevPartyData, data]);
+                navigate('/songs');
+              })
+              .catch((error) => {
+                console.error('Error adding song to party:', error);
+              });
           })
           .catch((error) => {
             console.error('Error adding song:', error);
           });
       } else if (song) {
+        // Edit existing song
         fetch(`/songs/${song.id}`, {
-            method: 'PATCH',  // Use PATCH to partially update the song
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              ...values,
-              duration: formattedDuration,
-            }),
-          })
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...values,
+            duration: formattedDuration,
+          }),
+        })
           .then((response) => response.json())
           .then((updatedSong) => {
             setSongs((prevSongs) =>
               prevSongs.map((s) => (s.id === updatedSong.id ? updatedSong : s))
             );
-            navigate('/songs');  // Navigate back to the songs list
+  
+            // Post to /party with the updated song_id
+            fetch(`/party/${song.id}`, {  // Use song.id to update the playlist entry
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                explicit: values.explicit,
+                song_id: updatedSong.id,  // Use the updated song_id
+                playlist_id: values.playlist_id,  // Assuming playlist_id is provided
+              }),
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                console.log('Playlist song updated:', data);
+                // Store the response in setParty
+                setPartyData((prevPartyData) => 
+                  prevPartyData.map((item) => (item.song_id === data.song_id ? data : item))
+                );
+                navigate('/songs');
+              })
+              .catch((error) => {
+                console.error('Error updating song in party:', error);
+              });
           })
           .catch((error) => {
             console.error('Error updating song:', error);
@@ -77,6 +122,7 @@ function SongForm({ songs, playlists, setSongs, deleteSong }) {
       }
     },
   });
+  
 
   // If there's no song and we're not adding a new one, don't render the form
   if (!song && id !== 'new') return null;
@@ -129,10 +175,41 @@ function SongForm({ songs, playlists, setSongs, deleteSong }) {
           />
           {formik.touched.duration && formik.errors.duration && <div>{formik.errors.duration}</div>}
         </div>
+        <div>
+          <label>
+            <input
+              type="checkbox"
+              name="explicit"
+              checked={formik.values.explicit}
+              onChange={formik.handleChange}
+            />
+            Explicit
+          </label>
+        </div>
+        <div>
+          <label>
+            Playlist:
+            <select
+              name="playlist_id"
+              value={formik.values.playlist_id}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+            >
+              <option value="" label="Select a playlist" />
+              {playlists.map((playlist) => (
+                <option key={playlist.id} value={playlist.id}>
+                  {playlist.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          {formik.touched.playlist_id && formik.errors.playlist_id && (
+            <div>{formik.errors.playlist_id}</div>
+          )}
+        </div>
         <button type="submit">{id === 'new' ? 'Add Song' : 'Save Changes'}</button>
       </form>
 
-      {/* Delete Button (only visible when editing an existing song) */}
       {id !== 'new' && (
         <button onClick={() => deleteSong(song.id)}>Delete Song</button>
       )}

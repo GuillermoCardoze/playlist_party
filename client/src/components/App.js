@@ -9,6 +9,7 @@ import Playlists from './Playlists';
 function App() {
   const [songs, setSongs] = useState([]);
   const [playlists, setPlaylists] = useState([]);
+  const [partyData, setPartyData] = useState([]); // Hold state for /party
 
   useEffect(() => {
     Promise.all([
@@ -16,11 +17,12 @@ function App() {
       fetch('/playlists').then((res) => res.json()),
       fetch('/party').then((res) => res.json()),
     ])
-      .then(([songsData, playlistsData, partyData]) => {
+      .then(([songsData, playlistsData, fetchedPartyData]) => {
         setPlaylists(playlistsData);
+        setPartyData(fetchedPartyData); // Store /party data separately
 
         const mergedSongs = songsData.map((song) => {
-          const partyInfo = partyData.find((party) => party.song_id === song.id);
+          const partyInfo = fetchedPartyData.find((party) => party.song_id === song.id);
           return {
             ...song,
             playlist_id: partyInfo?.playlist_id || null,
@@ -33,7 +35,6 @@ function App() {
       .catch((err) => console.error('Error fetching data:', err));
   }, []);
 
-  // Delete function lifted to App
   const deleteSong = (songId) => {
     fetch(`/songs/${songId}`, {
       method: 'DELETE',
@@ -56,20 +57,34 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route
             path="songs"
-            element={<Songs songs={songs} playlists={playlists} setSongs={setSongs} deleteSong={deleteSong} />}
+            element={<Songs
+              songs={songs}
+              playlists={playlists}
+              partyData={partyData} // Pass partyData if needed
+              setSongs={setSongs}
+              deleteSong={deleteSong}
+            />}
           />
           <Route
             path="playlists"
-            element={<Playlists songs={songs} playlists={playlists} setPlaylists={setPlaylists} setSongs={setSongs} />}
+            element={<Playlists
+              songs={songs}
+              playlists={playlists}
+              setPlaylists={setPlaylists}
+              setSongs={setSongs}
+            />}
           />
           <Route
             path="edit-song/:id"
-            element={<SongForm songs={songs} playlists={playlists} setSongs={setSongs} deleteSong={deleteSong} />}
+            element={<SongForm
+              songs={songs}
+              playlists={playlists}
+              setPlaylists={setPlaylists}
+              setSongs={setSongs}
+              deleteSong={deleteSong}
+              setPartyData={setPartyData}
+            />}
           />
-          {/* <Route
-            path="edit-song/new"
-            element={<SongForm songs={songs} playlists={playlists} setSongs={setSongs} deleteSong={deleteSong} />}
-          /> */}
         </Routes>
       </div>
     </Router>
