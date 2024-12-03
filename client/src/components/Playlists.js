@@ -104,19 +104,10 @@ function Playlists({ playlists, setPlaylists }) {
         placeholder="Search playlists..."
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        style={{
-          padding: '10px',
-          marginBottom: '20px',
-          width: '100%',
-          maxWidth: '400px',
-          borderRadius: '5px',
-          border: '1px solid #ccc',
-        }}
       />
 
       <form onSubmit={formik.handleSubmit} style={{ marginBottom: '20px' }}>
         <h3>{editingPlaylist ? 'Edit Playlist' : 'Add Playlist'}</h3>
-
         <div>
           <input
             type="text"
@@ -125,20 +116,11 @@ function Playlists({ playlists, setPlaylists }) {
             value={formik.values.name}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            style={{
-              padding: '10px',
-              marginBottom: '10px',
-              width: '100%',
-              maxWidth: '400px',
-              borderRadius: '5px',
-              border: '1px solid #ccc',
-            }}
           />
           {formik.touched.name && formik.errors.name && (
             <p style={{ color: 'red' }}>{formik.errors.name}</p>
           )}
         </div>
-
         <div>
           <input
             type="text"
@@ -147,37 +129,16 @@ function Playlists({ playlists, setPlaylists }) {
             value={formik.values.description}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            style={{
-              padding: '10px',
-              marginBottom: '10px',
-              width: '100%',
-              maxWidth: '400px',
-              borderRadius: '5px',
-              border: '1px solid #ccc',
-            }}
           />
           {formik.touched.description && formik.errors.description && (
             <p style={{ color: 'red' }}>{formik.errors.description}</p>
           )}
         </div>
-
         <button
           type="submit"
-          style={{
-            padding: '10px',
-            marginBottom: '10px',
-            width: '100%',
-            maxWidth: '200px',
-            borderRadius: '5px',
-            border: '1px solid #ccc',
-            backgroundColor: '#4CAF50',
-            color: 'white',
-            cursor: 'pointer',
-          }}
         >
           {editingPlaylist ? 'Update Playlist' : 'Add Playlist'}
         </button>
-
         {editingPlaylist && (
           <button
             type="button"
@@ -185,23 +146,11 @@ function Playlists({ playlists, setPlaylists }) {
               setEditingPlaylist(null);
               formik.resetForm();
             }}
-            style={{
-              padding: '10px',
-              marginBottom: '10px',
-              width: '100%',
-              maxWidth: '200px',
-              borderRadius: '5px',
-              border: '1px solid #ccc',
-              backgroundColor: '#f44336',
-              color: 'white',
-              cursor: 'pointer',
-            }}
           >
             Cancel Edit
           </button>
         )}
       </form>
-
       {filteredPlaylists.length === 0 ? (
         <p>No playlists found</p>
       ) : (
@@ -215,29 +164,12 @@ function Playlists({ playlists, setPlaylists }) {
               </div>
               <button
                 onClick={() => handleEdit(playlist)}
-                style={{
-                  padding: '5px 10px',
-                  margin: '5px',
-                  borderRadius: '5px',
-                  border: '1px solid #ccc',
-                  backgroundColor: '#2196F3',
-                  color: 'white',
-                  cursor: 'pointer',
-                }}
+                
               >
                 Update Playlist
               </button>
               <button
                 onClick={() => handleDelete(playlist.id)}
-                style={{
-                  padding: '5px 10px',
-                  margin: '5px',
-                  borderRadius: '5px',
-                  border: '1px solid #ccc',
-                  backgroundColor: '#f44336',
-                  color: 'white',
-                  cursor: 'pointer',
-                }}
               >
                 Delete Playlist
               </button>

@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
-function SongForm({ songs, playlists, setSongs, deleteSong, setPartyData, setPlaylists, partyData }) {
+function SongForm({ songs, playlists, setSongs, deleteSong, setPartyData, partyData }) {
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -24,8 +24,8 @@ function SongForm({ songs, playlists, setSongs, deleteSong, setPartyData, setPla
       artist: song?.artist || '',
       genre: song?.genre || '',
       duration: song?.duration || '',
-      explicit: partyInfo?.explicit || false, // Explicit info from partyData
-      playlist_id: partyInfo?.playlist_id || '', // Playlist ID from partyData
+      explicit: partyInfo?.explicit || false, 
+      playlist_id: partyInfo?.playlist_id || '', 
     },
     validationSchema: Yup.object({
       title: Yup.string().required('Title is required'),
@@ -59,14 +59,14 @@ function SongForm({ songs, playlists, setSongs, deleteSong, setPartyData, setPla
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 explicit: values.explicit,
-                song_id: newSong.id,  // Use the new song_id
-                playlist_id: values.playlist_id,  // Assuming playlist_id is provided
+                song_id: newSong.id,  
+                playlist_id: values.playlist_id,  
               }),
             })
               .then((response) => response.json())
               .then((data) => {
                 console.log('Playlist song created:', data);
-                // Store the response in setParty
+                
                 setPartyData((prevPartyData) => [...prevPartyData, data]);
                 navigate('/songs');
               })
@@ -94,19 +94,18 @@ function SongForm({ songs, playlists, setSongs, deleteSong, setPartyData, setPla
             );
   
             // Post to /party with the updated song_id
-            fetch(`/party/${partyInfo.id}`, {  // Use partyInfo.id to update the playlist entry
+            fetch(`/party/${partyInfo.id}`, {  
               method: 'PATCH',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 explicit: values.explicit,
-                song_id: updatedSong.id,  // Use the updated song_id
-                playlist_id: values.playlist_id,  // Assuming playlist_id is provided
+                song_id: updatedSong.id,  
+                playlist_id: values.playlist_id,  
               }),
             })
               .then((response) => response.json())
               .then((data) => {
                 console.log('Playlist song updated:', data);
-                // Store the response in setParty
                 setPartyData((prevPartyData) => 
                   prevPartyData.map((item) => (item.song_id === data.song_id ? data : item))
                 );

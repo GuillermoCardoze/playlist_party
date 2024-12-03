@@ -9,7 +9,7 @@ import Playlists from './Playlists';
 function App() {
   const [songs, setSongs] = useState([]);
   const [playlists, setPlaylists] = useState([]);
-  const [partyData, setPartyData] = useState([]); // Hold state for /party
+  const [partyData, setPartyData] = useState([]); 
 
   useEffect(() => {
     Promise.all([
@@ -19,7 +19,7 @@ function App() {
     ])
       .then(([songsData, playlistsData, fetchedPartyData]) => {
         setPlaylists(playlistsData);
-        setPartyData(fetchedPartyData); // Store /party data separately
+        setPartyData(fetchedPartyData); 
 
         const mergedSongs = songsData.map((song) => {
           const partyInfo = fetchedPartyData.find((party) => party.song_id === song.id);
@@ -60,7 +60,7 @@ function App() {
             element={<Songs
               songs={songs}
               playlists={playlists}
-              partyData={partyData} // Pass partyData if needed
+              partyData={partyData} 
               setSongs={setSongs}
               deleteSong={deleteSong}
             />}

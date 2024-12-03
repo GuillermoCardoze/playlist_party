@@ -50,7 +50,6 @@ class Songs(Resource):
                 genre=request_json['genre'],
                 duration=duration_str  # Store duration as MM:SS format
             )
-
             db.session.add(new_song)
             db.session.commit()
             return make_response(jsonify(new_song.to_dict()), 201)

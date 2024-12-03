@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-function Songs({ songs, playlists, setSongs, deleteSong, partyData }) {
+function Songs({ songs, playlists, deleteSong, partyData }) {
 
   return (
     <div>
@@ -30,7 +30,6 @@ function Songs({ songs, playlists, setSongs, deleteSong, partyData }) {
                 <br />
                 <strong>Explicit:</strong> {explicit ? 'Yes' : 'No'}
                 <br />
-                {/* Display Playlist name and description */}
                 <strong>Playlist Name:</strong> {playlist ? playlist.name : 'No Playlist'}
                 <br />
                 <strong>Playlist Description:</strong> {playlist ? playlist.description : 'No Description'}
@@ -38,7 +37,6 @@ function Songs({ songs, playlists, setSongs, deleteSong, partyData }) {
                 <Link to={`/edit-song/${song.id}`}>
                   <button>Edit</button>
                 </Link>
-                {/* Delete button */}
                 <button onClick={() => deleteSong(song.id)}>Delete</button>
               </li>
             </div>
