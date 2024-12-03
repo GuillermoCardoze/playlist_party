@@ -138,7 +138,9 @@ function SongForm({ songs, playlists, setSongs, deleteSong, setPartyData, partyD
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
           />
-          {formik.touched.title && formik.errors.title && <div>{formik.errors.title}</div>}
+          {formik.touched.title && formik.errors.title && (
+            <div style={{ color: 'red' }}>{formik.errors.title}</div>
+          )}
         </div>
         <div>
           <input
@@ -149,7 +151,9 @@ function SongForm({ songs, playlists, setSongs, deleteSong, setPartyData, partyD
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
           />
-          {formik.touched.artist && formik.errors.artist && <div>{formik.errors.artist}</div>}
+          {formik.touched.artist && formik.errors.artist && (
+            <div style={{ color: 'red' }}>{formik.errors.artist}</div>
+          )}
         </div>
         <div>
           <input
@@ -160,7 +164,9 @@ function SongForm({ songs, playlists, setSongs, deleteSong, setPartyData, partyD
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
           />
-          {formik.touched.genre && formik.errors.genre && <div>{formik.errors.genre}</div>}
+          {formik.touched.genre && formik.errors.genre && (
+            <div style={{ color: 'red' }}>{formik.errors.genre}</div>
+          )}
         </div>
         <div>
           <input
@@ -171,7 +177,9 @@ function SongForm({ songs, playlists, setSongs, deleteSong, setPartyData, partyD
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
           />
-          {formik.touched.duration && formik.errors.duration && <div>{formik.errors.duration}</div>}
+          {formik.touched.duration && formik.errors.duration && (
+            <div style={{ color: 'red' }}>{formik.errors.duration}</div>
+          )}
         </div>
         <div>
           <label>
@@ -202,7 +210,7 @@ function SongForm({ songs, playlists, setSongs, deleteSong, setPartyData, partyD
             </select>
           </label>
           {formik.touched.playlist_id && formik.errors.playlist_id && (
-            <div>{formik.errors.playlist_id}</div>
+            <div style={{ color: 'red' }}>{formik.errors.playlist_id}</div>
           )}
         </div>
         <button type="submit">{id === 'new' ? 'Add Song' : 'Save Changes'}</button>
