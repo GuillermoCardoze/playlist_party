@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { AppContext } from './AppContext';
 
-function Playlists({ playlists, setPlaylists }) {
+function Playlists() {
+  const { playlists, setPlaylists } = useContext(AppContext);
   const [searchQuery, setSearchQuery] = useState('');
   const [editingPlaylist, setEditingPlaylist] = useState(null);
 

@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { AppContext } from './AppContext';
 
-function Songs({ songs, playlists, deleteSong, partyData }) {
+function Songs() {
+  const { songs, playlists, deleteSong, partyData } = useContext(AppContext);
+  
 
   return (
     <div>

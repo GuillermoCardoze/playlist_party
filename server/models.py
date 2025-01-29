@@ -18,10 +18,16 @@ class Song(db.Model, SerializerMixin):
     artist = db.Column(db.String, nullable=False)
     genre = db.Column(db.String)
     duration = db.Column(db.String, nullable=False)  # Store duration as a string in MM:SS format
-
-
+    
     # Relationship to Playlist_song (many-to-many with Playlist)
     playlist_songs = db.relationship('Playlist_song', back_populates='song', cascade='all, delete-orphan')
+
+    # Association proxy for accessing playlists directly with a creator function
+    playlists = association_proxy(
+        'playlist_songs',
+        'playlist',
+        creator=lambda playlist_obj: Playlist_song(playlist=playlist_obj)
+    )
 
     serialize_rules = ('-playlist_songs',)
 
@@ -56,8 +62,7 @@ class Song(db.Model, SerializerMixin):
         return value
 
     def __repr__(self):
-        return f'<Song Title:{self.title}, Artist:{self.artist}>, Genre:{self.genre}, Duration:{self.duration}'
-
+        return f'<Song Title:{self.title}, Artist:{self.artist}, Genre:{self.genre}, Duration:{self.duration}>'
 
 class Playlist_song(db.Model, SerializerMixin):
     __tablename__ = 'playlist_songs'
@@ -91,6 +96,13 @@ class Playlist(db.Model, SerializerMixin):
 
     # Relationship to Playlist_song (many-to-many with Song)
     playlist_songs = db.relationship('Playlist_song', back_populates='playlist', cascade='all, delete-orphan')
+
+    # Association proxy for accessing songs directly with a creator function
+    songs = association_proxy(
+        'playlist_songs',
+        'song',
+        creator=lambda song_obj: Playlist_song(song=song_obj)
+    )
 
     serialize_rules = ('-playlist_songs',)
 

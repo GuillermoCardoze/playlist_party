@@ -3,7 +3,7 @@ import React from 'react';
 function Home() {
     return (
     <div style={{ textAlign: 'center' }}>
-        <h1>Home Page</h1>
+        <h1>Playlist Party</h1>
         <p>
         This app is a music management platform that allows users to create, view, edit, and delete songs and playlists while associating songs with playlists. The app features components for displaying a list of songs, managing playlists, and a form for adding or editing songs. Through the integration of party data, the app tracks additional song metadata, such as whether a song is explicit and its associated playlist, ensuring songs are dynamically tied to their respective playlists. Users can seamlessly update or delete songs and playlists via user-friendly interfaces, with validations ensuring data integrity during submissions.
         </p>

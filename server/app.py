@@ -7,7 +7,7 @@ from config import app, db, api
 from models import Song, Playlist_song, Playlist
 
 # Views go here!
-
+from sqlalchemy import func
 from flask import request, make_response, jsonify
 from flask_restful import Resource
 from werkzeug.exceptions import NotFound
@@ -229,6 +229,17 @@ class PartyById(Resource):
 
 api.add_resource(PartyById, '/party/<int:id>')
 
+
+### GET ALL SONGS BY A GENRE
+class Genre(Resource):
+    def get(self,genre):
+        
+        songs = Song.query.filter(Song.genre==genre).all()
+        song_dict = [song.to_dict() for song in songs]
+        return make_response(song_dict,200)
+
+
+api.add_resource(Genre, '/genre/<string:genre>')        
 
 
 if __name__ == '__main__':

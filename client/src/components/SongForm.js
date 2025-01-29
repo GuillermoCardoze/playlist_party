@@ -1,9 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useFormik } from 'formik';
+import { AppContext } from './AppContext';
 import * as Yup from 'yup';
 
-function SongForm({ songs, playlists, setSongs, deleteSong, setPartyData, partyData }) {
+function SongForm() {
+  const { songs, playlists, setSongs, deleteSong, setPartyData, partyData } = useContext(AppContext)
   const { id } = useParams();
   const navigate = useNavigate();
 
