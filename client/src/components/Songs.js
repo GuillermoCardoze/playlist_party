@@ -4,7 +4,8 @@ import { AppContext } from './AppContext';
 
 function Songs() {
   const { songs, playlists, deleteSong, partyData } = useContext(AppContext);
-  
+
+  if (!songs.length) return <div>No songs available</div>;
 
   return (
     <div>
@@ -14,10 +15,10 @@ function Songs() {
         {songs.map((song) => {
           // Find the partyData entry for this song to get playlist_id and explicit
           const partyInfo = partyData.find((party) => party.song_id === song.id);
-          const playlistId = partyInfo ? partyInfo.playlist_id : null;
-          const explicit = partyInfo ? partyInfo.explicit : false;
+          const playlistId = partyInfo?.playlist_id || null;
+          const explicit = partyInfo?.explicit || false;
 
-          // Find the playlist associated with this song using playlistId
+          // Find the playlist associated with this song
           const playlist = playlists.find((playlist) => playlist.id === playlistId);
 
           return (
@@ -33,9 +34,9 @@ function Songs() {
                 <br />
                 <strong>Explicit:</strong> {explicit ? 'Yes' : 'No'}
                 <br />
-                <strong>Playlist Name:</strong> {playlist ? playlist.name : 'No Playlist'}
+                <strong>Playlist Name:</strong> {playlist?.name || 'No Playlist'}
                 <br />
-                <strong>Playlist Description:</strong> {playlist ? playlist.description : 'No Description'}
+                <strong>Playlist Description:</strong> {playlist?.description || '—'}
                 <br />
                 <Link to={`/edit-song/${song.id}`}>
                   <button>Edit</button>

@@ -1,19 +1,18 @@
 import React, { useContext, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useFormik } from 'formik';
-import { AppContext } from './AppContext';
 import * as Yup from 'yup';
+import { AppContext } from './AppContext';
 
 function SongForm() {
-  const { songs, playlists, setSongs, deleteSong, setPartyData, partyData } = useContext(AppContext)
+  const { songs, playlists, addSong, updateSong, deleteSong } = useContext(AppContext);
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // Find the song and associated partyData if not adding a new one (id !== 'new')
+  // Find song by id if editing, or set to null for a new song
   const song = id !== 'new' ? songs.find((s) => s.id === parseInt(id)) : null;
-  const partyInfo = song ? partyData.find((p) => p.song_id === song.id) : null; // Find the associated partyData
 
-  // Redirect if trying to edit a song that doesn't exist
+  // Redirect if editing a non-existent song
   useEffect(() => {
     if (id !== 'new' && !song) {
       navigate('/songs');
@@ -26,8 +25,8 @@ function SongForm() {
       artist: song?.artist || '',
       genre: song?.genre || '',
       duration: song?.duration || '',
-      explicit: partyInfo?.explicit || false, 
-      playlist_id: partyInfo?.playlist_id || '', 
+      explicit: song?.explicit || false,
+      playlist_id: song?.playlist_id || '',
     },
     validationSchema: Yup.object({
       title: Yup.string().required('Title is required'),
@@ -38,93 +37,17 @@ function SongForm() {
         .required('Duration is required'),
     }),
     onSubmit: (values) => {
-      const [minutes, seconds] = values.duration.split(':').map(Number);
-      const formattedDuration = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-  
       if (id === 'new') {
-        // Create new song
-        fetch('/songs', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            ...values,
-            duration: formattedDuration,
-          }),
-        })
-          .then((response) => response.json())
-          .then((newSong) => {
-            setSongs((prevSongs) => [...prevSongs, newSong]);
-  
-            // Now post to /party with the new song_id
-            fetch('/party', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                explicit: values.explicit,
-                song_id: newSong.id,  
-                playlist_id: values.playlist_id,  
-              }),
-            })
-              .then((response) => response.json())
-              .then((data) => {
-                console.log('Playlist song created:', data);
-                
-                setPartyData((prevPartyData) => [...prevPartyData, data]);
-                navigate('/songs');
-              })
-              .catch((error) => {
-                console.error('Error adding song to party:', error);
-              });
-          })
-          .catch((error) => {
-            console.error('Error adding song:', error);
-          });
-      } else if (song) {
-        // Edit existing song
-        fetch(`/songs/${song.id}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            ...values,
-            duration: formattedDuration,
-          }),
-        })
-          .then((response) => response.json())
-          .then((updatedSong) => {
-            setSongs((prevSongs) =>
-              prevSongs.map((s) => (s.id === updatedSong.id ? updatedSong : s))
-            );
-  
-            // Post to /party with the updated song_id
-            fetch(`/party/${partyInfo.id}`, {  
-              method: 'PATCH',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                explicit: values.explicit,
-                song_id: updatedSong.id,  
-                playlist_id: values.playlist_id,  
-              }),
-            })
-              .then((response) => response.json())
-              .then((data) => {
-                console.log('Playlist song updated:', data);
-                setPartyData((prevPartyData) => 
-                  prevPartyData.map((item) => (item.song_id === data.song_id ? data : item))
-                );
-                navigate('/songs');
-              })
-              .catch((error) => {
-                console.error('Error updating song in party:', error);
-              });
-          })
-          .catch((error) => {
-            console.error('Error updating song:', error);
-          });
+        // Add new song
+        addSong(values).then(() => navigate('/songs'));
+      } else {
+        // Update existing song
+        updateSong(song.id, values).then(() => navigate('/songs'));
       }
     },
   });
 
-  // If there's no song and we're not adding a new one, don't render the form
+  // If there's no song found and this isn't a new entry, don't show the form
   if (!song && id !== 'new') return null;
 
   return (
